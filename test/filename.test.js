@@ -53,3 +53,9 @@ test('attemptFilename', () => {
 test('runFolderName', () => {
   assert.equal(runFolderName(new Date(2026, 10, 18, 14, 30, 5)), '2026-11-18 14-30-05');
 });
+
+test('Content-Disposition: filename*= с «сырыми» байтами UTF-8 вместо percent-кодирования', () => {
+  // так отвечают серверы, нарушающие RFC 5987; fetch отдаёт эти байты как latin1
+  const mojibake = Buffer.from('отчёт за 2026.pdf', 'utf8').toString('latin1');
+  assert.equal(filenameFromContentDisposition(`attachment; filename*=UTF-8''${mojibake}`), 'отчёт за 2026.pdf');
+});

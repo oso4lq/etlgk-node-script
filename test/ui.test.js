@@ -114,3 +114,8 @@ test('терминал: Ctrl+C во время вопроса завершает
   assert.equal(await answer, false);
   assert.equal(await ui.askText('Ссылка: '), '', 'после прерывания вопросы больше не задаются');
 });
+
+test('renderAttemptLine: ошибка читается как фраза, без дублирования слова «ошибка»', () => {
+  const failed = renderAttemptLine({ index: 1, ok: false, bytes: 0, durationMs: 0, retries: 0, error: 'HTTP 404' }, 2);
+  assert.equal(failed.trim(), '1/2  ОШИБКА  HTTP 404');
+});
