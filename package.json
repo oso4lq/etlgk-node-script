@@ -1,0 +1,19 @@
+{
+  "name": "download-speed-cli",
+  "version": "1.0.0",
+  "description": "Консольный скрипт: последовательно скачивает файл N раз и измеряет скорость",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "download-speed": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "private": true
+}
