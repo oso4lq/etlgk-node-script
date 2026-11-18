@@ -136,3 +136,8 @@ test('обычный сайт: HTML считается файлом, решае�
     assert.equal(info.filename, 'page.html');
   },
 ));
+
+test('204 No Content — файла нет', () => withServer(
+  (req, res) => { res.writeHead(204); res.end(); },
+  ({ url }) => rejectsWith(inspectUrl(`${url}/f`), { code: 'NOT_A_FILE', retryable: false }),
+));

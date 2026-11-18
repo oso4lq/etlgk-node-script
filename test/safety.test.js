@@ -42,3 +42,15 @@ test('сигнатуры', () => {
   assert.equal(detectExecutableSignature(Buffer.from('M')), null);
   assert.equal(detectExecutableSignature(Buffer.alloc(0)), null);
 });
+
+test('веб-страница под «безопасным» расширением — не безопасный файл', () => {
+  assert.equal(verdict('video.mp4', 'text/html'), 'unknown');
+  assert.equal(verdict('doc.pdf', 'application/xhtml+xml'), 'unknown');
+  assert.match(classifyFile({ filename: 'video.mp4', contentType: 'text/html' }).reason, /веб-страниц/);
+});
+
+test('имя из одного расширения (".bat") считается исполняемым', () => {
+  assert.equal(verdict('.bat', 'text/plain'), 'executable');
+  assert.equal(verdict('.ps1', 'image/png'), 'executable');
+  assert.equal(verdict('.gitignore', 'text/plain'), 'unknown');
+});

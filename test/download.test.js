@@ -209,3 +209,11 @@ test('повтор: прерывание во время паузы не ждё�
     assert.ok(Date.now() - started < 2000);
   },
 ));
+
+test('204 No Content при загрузке — файла нет, без повторов', () => scenario(
+  (req, res) => { res.writeHead(204); res.end(); },
+  async ({ server, dest, info }) => {
+    await rejectsWith(downloadWithRetry(info(), dest, { baseDelayMs: 10 }), { code: 'NOT_A_FILE', retries: 0 });
+    assert.equal(server.requests.length, 1);
+  },
+));

@@ -157,3 +157,25 @@ test('--help', () => scenario(
     assert.ok(out.includes('--count') && out.includes('--yes'), out);
   },
 ));
+
+test('веб-страница по ссылке с расширением .mp4 не скачивается молча', () => scenario(
+  (req, res) => sendFile(res, Buffer.from('<html>Not found</html>'), { type: 'text/html; charset=utf-8', name: null }),
+  async ({ server, cwd, run }) => {
+    const { code, out } = await run(`${server.url}/video.mp4`, '--count', '2');
+    assert.equal(code, 1, out);
+    assert.ok(out.includes('веб-страниц') && out.includes('--yes'), out);
+    assert.equal(await exists(path.join(cwd, 'downloads')), false);
+    assert.equal(server.requests.length, 1);
+  },
+));
+
+test('папку загрузки создать нельзя — понятное сообщение', () => scenario(
+  (req, res) => sendFile(res, BODY),
+  async ({ cwd, url, run }) => {
+    await fs.writeFile(path.join(cwd, 'downloads'), 'это файл, а не папка');
+    const { code, out } = await run(url, '--count', '1');
+    assert.equal(code, 1, out);
+    assert.ok(out.includes('Не удалось создать папку'), out);
+    assert.ok(!out.includes('Непредвиденная') && !out.includes('EEXIST') && !out.includes('ENOTDIR'), out);
+  },
+));
